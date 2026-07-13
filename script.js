@@ -25,19 +25,30 @@ function copyDiscord() {
 }
 
 const inputs = document.querySelectorAll("select, input");
-inputs.forEach((input) => input.addEventListener("change", calculate));
+inputs.forEach((input) => {
+    input.addEventListener("change", calculate);
+    input.addEventListener("input", calculate);
+});
+
+function normalizeCount(value) {
+    return Math.max(0, parseInt(value || 0, 10) || 0);
+}
 
 function calculate() {
     const base = parseInt(document.getElementById("format").value, 10);
     const bg = parseInt(document.getElementById("background").value, 10);
+    const extraCharactersInput = document.getElementById("extraCharacters");
+    const extrasInput = document.getElementById("extras");
+    const extraCharacters = normalizeCount(extraCharactersInput.value);
+    const extras = normalizeCount(extrasInput.value);
+
+    extraCharactersInput.value = extraCharacters;
+    extrasInput.value = extras;
 
     let total = base + bg;
 
-    if (document.getElementById("extraCharacter").checked) {
-        total += base;
-    }
-
-    total += parseInt(document.getElementById("extras").value || 0, 10) * 500;
+    total += base * extraCharacters;
+    total += extras * 500;
 
     if (document.getElementById("heavyDetails").checked) {
         total *= 1.3;
