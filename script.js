@@ -1,5 +1,5 @@
 let currentImage = 1;
-const totalImages = 12;
+const totalImages = 20;
 
 const img = document.getElementById("galleryImage");
 const counter = document.getElementById("galleryCounter");
