@@ -27,8 +27,8 @@ function copyDiscord() {
 const pricing = {
     ru: {
         formats: [
-            { value: 2000, label: "Голова: 2000₽" },
-            { value: 4000, label: "Половина: 4000₽" },
+            { value: 2000, label: "Бюст: 2000₽" },
+            { value: 4000, label: "По бёдра: 4000₽" },
             { value: 6000, label: "Фулл: 6000₽" },
             { value: 250, label: "Чиби line: 250₽" },
             { value: 500, label: "Чиби color: 500₽" }
