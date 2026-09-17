@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Рыбинская Психопатка - портфолио</title>
+    <title>Zlodeykapass</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Портфолио, прайсы и калькулятор стоимости.">
     <link rel="stylesheet" href="style.css">
@@ -11,13 +11,15 @@
     <div class="page-shell">
         <header class="hero">
             <div class="hero-card">
-                <div class="hero-topline">Портфолио и прайсы</div>
+                <div class="language-switch" role="group" aria-label="Language">
+                    <button class="language-option is-active" type="button" data-language="ru" aria-pressed="true">Ru</button>
+                    <button class="language-option" type="button" data-language="en" aria-pressed="false">Eng</button>
+                </div>
 
                 <div class="hero-title">
                     <img src="pfp1.jpg" alt="pfp left" class="pfp">
                     <div class="title-block">
-                        <h1>Рыбинская Психопатка</h1>
-                        <p class="hero-subtitle">Художница • Дизайнер • Кастомы • Арты на заказ</p>
+                        <h1 id="artistName">диана злодейка</h1>
                     </div>
                     <img src="pfp2.jpg" alt="pfp right" class="pfp">
                 </div>
@@ -34,8 +36,7 @@
         <main>
             <section class="section">
                 <div class="section-heading">
-                    <span class="section-kicker">Работы</span>
-                    <h2>Галерея</h2>
+                    <h2 id="galleryTitle">Галерея</h2>
                 </div>
 
                 <div class="gallery-card">
@@ -48,81 +49,61 @@
                     <button class="nav" type="button" aria-label="Следующее изображение">›</button>
                 </div>
 
-                <div class="gallery-counter" id="galleryCounter">1 / 20</div>
+                <div class="gallery-counter" id="galleryCounter">1 / 14</div>
             </section>
 
             <section class="section">
                 <div class="section-heading">
-                    <span class="section-kicker">Прайс</span>
-                    <h2>Калькулятор стоимости</h2>
+                    <h2 id="calculatorTitle">Калькулятор стоимости</h2>
                 </div>
 
                 <div class="pricing-layout">
                     <div class="info-card visual-card">
-                        <img src="moneyImage1.jpg" alt="price info" class="money-image">
+                        <img src="moneyImage1.png" alt="price info" class="money-image">
                     </div>
 
                     <div class="info-card calculator-card">
                         <form class="calculator" onsubmit="return false;">
                             <div class="field">
-                                <label for="format">Формат персонажа</label>
-                                <select id="format">
-                                    <option value="1200">Хэд (по плечи) - 1200₽</option>
-                                    <option value="2500">Халф (по бедра) - 2500₽</option>
-                                    <option value="4000">Фулл (полный рост) - 4000₽</option>
-                                    <option value="500">Цветной скетч - 500₽</option>
-                                </select>
+                                <label for="format" id="formatLabel">Формат персонажа</label>
+                                <select id="format"></select>
                             </div>
 
                             <div class="field">
-                                <label for="extraCharacters">Доп. персонаж (+100% от цены персонажа)</label>
+                                <label for="extraCharacters" id="extraCharactersLabel">Доп. персонаж (+100%)</label>
                                 <input type="number" id="extraCharacters" min="0" value="0">
                             </div>
 
                             <div class="field">
-                                <label for="background">Фон</label>
-                                <select id="background">
-                                    <option value="0">Простой - бесплатно</option>
-                                    <option value="1500">Средняя детализация - 1500₽</option>
-                                    <option value="4000">Большая детализация - 4000₽</option>
-                                </select>
-                            </div>
-
-                            <div class="field">
-                                <label for="extras">Оружие / магия / животные (за штуку)</label>
-                                <input type="number" id="extras" min="0" value="0">
+                                <label for="background" id="backgroundLabel">Фон</label>
+                                <select id="background"></select>
                             </div>
 
                             <div class="checks-grid">
                                 <label class="check">
                                     <input type="checkbox" id="heavyDetails">
-                                    <span>Сильная детализация / броня (+30%)</span>
-                                </label>
-
-                                <label class="check">
-                                    <input type="checkbox" id="process">
-                                    <span>Запись процесса (+50₽)</span>
+                                    <span id="heavyDetailsLabel">Доп. детали, крылья, броня и т. д. (+20%)</span>
                                 </label>
 
                                 <label class="check">
                                     <input type="checkbox" id="nsfw">
-                                    <span>NSFW (+500₽)</span>
+                                    <span>NSFW (+50%~)</span>
                                 </label>
 
                                 <label class="check">
                                     <input type="checkbox" id="deadline">
-                                    <span>Срочный дедлайн (+500₽)</span>
+                                    <span id="deadlineLabel">Установление дедлайна (+25%)</span>
                                 </label>
 
-                                <label class="check">
+                                <label class="check" id="discountRow">
                                     <input type="checkbox" id="discount">
-                                    <span>Подписка (скидка 20%)</span>
+                                    <span id="discountLabel">Подписка на платку (скидка 20%)</span>
                                 </label>
                             </div>
 
                             <div class="total-card">
-                                <span class="total-label">Итог</span>
-                                <span class="total-value"><span id="totalPrice">0</span> ₽</span>
+                                <span class="total-label" id="totalLabel">Итог</span>
+                                <span class="total-value" id="totalValue">0 ₽</span>
                             </div>
                         </form>
                     </div>
@@ -131,23 +112,22 @@
 
             <section class="section">
                 <div class="section-heading">
-                    <span class="section-kicker">Условия</span>
-                    <h2>Важно</h2>
+                    <h2 id="importantTitle">Важно</h2>
                 </div>
 
                 <div class="info-card">
                     <ul class="info-list">
-                        <li>Предоплата 100% после одобрения скетча</li>
-                        <li>Анимация - <strong>от 3000₽</strong> (цена за арт считается отдельно)</li>
-                        <li>Кастомы - <strong>от 5000₽</strong></li>
-                        <li>Оплата: Сбер, СБП, Telegram ⭐, Boosty</li>
+                        <li id="prepaymentText">Предоплата 100% после одобрения скетча</li>
+                        <li id="animationText">Анимации — <strong>от 30$</strong> (цена за арт считается отдельно)</li>
+                        <li id="customsText">Кастомы — <strong>от 7000₽</strong></li>
+                        <li id="paymentText">Оплата: Boosty, Tribute, СБП</li>
                     </ul>
                 </div>
             </section>
         </main>
 
         <footer class="footer">
-            <p>© Рыбинская Психопатка</p>
+            <p>© Zlodeykapass</p>
         </footer>
     </div>
 
