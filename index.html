@@ -65,41 +65,62 @@
                     <div class="info-card calculator-card">
                         <form class="calculator" onsubmit="return false;">
                             <div class="field">
-                                <label for="format" id="formatLabel">Формат персонажа</label>
+                                <div class="field-label-row">
+                                    <label for="format" id="formatLabel">Формат персонажа</label>
+                                    <button class="help-trigger" type="button" data-help="format" aria-label="Пояснение к формату персонажа">?</button>
+                                </div>
                                 <select id="format"></select>
                             </div>
 
                             <div class="field">
-                                <label for="extraCharacters" id="extraCharactersLabel">Доп. персонаж (+100%)</label>
+                                <div class="field-label-row">
+                                    <label for="extraCharacters" id="extraCharactersLabel">Доп. персонаж (+100%)</label>
+                                    <button class="help-trigger" type="button" data-help="extraCharacters" aria-label="Пояснение к дополнительному персонажу">?</button>
+                                </div>
                                 <input type="number" id="extraCharacters" min="0" value="0">
                             </div>
 
                             <div class="field">
-                                <label for="background" id="backgroundLabel">Фон</label>
+                                <div class="field-label-row">
+                                    <label for="background" id="backgroundLabel">Фон</label>
+                                    <button class="help-trigger" type="button" data-help="background" aria-label="Пояснение к фону">?</button>
+                                </div>
                                 <select id="background"></select>
                             </div>
 
                             <div class="field">
-                                <label for="heavyDetails" id="heavyDetailsLabel">Доп. детали, крылья, броня и т. д. (+20%)</label>
+                                <div class="field-label-row">
+                                    <label for="heavyDetails" id="heavyDetailsLabel">Доп. детали, крылья, броня и т. д. (+20%)</label>
+                                    <button class="help-trigger" type="button" data-help="heavyDetails" aria-label="Пояснение к дополнительным деталям">?</button>
+                                </div>
                                 <input type="number" id="heavyDetails" min="0" value="0">
                             </div>
 
                             <div class="checks-grid">
 
-                                <label class="check">
-                                    <input type="checkbox" id="nsfw">
-                                    <span>NSFW (+50%~)</span>
-                                </label>
+                                <div class="check">
+                                    <label class="check-content" for="nsfw">
+                                        <input type="checkbox" id="nsfw">
+                                        <span id="nsfwLabel">NSFW (+50%~)</span>
+                                    </label>
+                                    <button class="help-trigger" type="button" data-help="nsfw" aria-label="Пояснение к NSFW">?</button>
+                                </div>
 
-                                <label class="check">
-                                    <input type="checkbox" id="deadline">
-                                    <span id="deadlineLabel">Установление дедлайна (+25%)</span>
-                                </label>
+                                <div class="check">
+                                    <label class="check-content" for="deadline">
+                                        <input type="checkbox" id="deadline">
+                                        <span id="deadlineLabel">Установление дедлайна (+25%)</span>
+                                    </label>
+                                    <button class="help-trigger" type="button" data-help="deadline" aria-label="Пояснение к установлению дедлайна">?</button>
+                                </div>
 
-                                <label class="check" id="discountRow">
-                                    <input type="checkbox" id="discount">
-                                    <span id="discountLabel">Подписка на платку (скидка 20%)</span>
-                                </label>
+                                <div class="check" id="discountRow">
+                                    <label class="check-content" for="discount">
+                                        <input type="checkbox" id="discount">
+                                        <span id="discountLabel">Подписка на платку (скидка 20%)</span>
+                                    </label>
+                                    <button class="help-trigger" type="button" data-help="discount" aria-label="Пояснение к скидке по подписке">?</button>
+                                </div>
                             </div>
 
                             <div class="total-card">
@@ -119,8 +140,8 @@
                 <div class="info-card">
                     <ul class="info-list">
                         <li id="prepaymentText">Предоплата 100% после одобрения скетча</li>
-                        <li id="animationText">Анимации — <strong>от 30$</strong> (цена за арт считается отдельно)</li>
-                        <li id="customsText">Кастомы — <strong>от 7000₽</strong></li>
+                        <li><span id="animationText">Анимации — <strong>от 30$</strong> (цена за арт считается отдельно)</span><button class="help-trigger info-help" type="button" data-help="animation" aria-label="Примеры анимаций">?</button></li>
+                        <li><span id="customsText">Кастомы — <strong>от 7000₽</strong></span><button class="help-trigger info-help" type="button" data-help="customs" aria-label="Пример кастома">?</button></li>
                         <li id="paymentText">Оплата: Boosty, Tribute, СБП</li>
                     </ul>
                 </div>
@@ -130,6 +151,10 @@
         <footer class="footer">
             <p>© Zlodeykapass</p>
         </footer>
+    </div>
+
+    <div class="help-popover" id="helpPopover" role="tooltip" hidden>
+        <div class="help-popover-content" id="helpPopoverContent"></div>
     </div>
 
     <script src="script.js"></script>

@@ -64,6 +64,7 @@ const translations = {
         extraCharactersLabel: "Доп. персонаж (+100%)",
         backgroundLabel: "Фон",
         heavyDetailsLabel: "Доп. детали, крылья, броня и т. д. (+20%)",
+        nsfwLabel: "NSFW (+50%~)",
         deadlineLabel: "Установление дедлайна (+25%)",
         discountLabel: "Подписка на платку (скидка 20%)",
         totalLabel: "Итог",
@@ -84,6 +85,7 @@ const translations = {
         extraCharactersLabel: "Extra character (+100%)",
         backgroundLabel: "Background",
         heavyDetailsLabel: "Extra details, wings, armor, etc. (+20%)",
+        nsfwLabel: "NSFW (+50%~)",
         deadlineLabel: "Set deadline (+25%)",
         discountLabel: "Subscription discount (20%)",
         totalLabel: "Total",
@@ -105,6 +107,298 @@ const backgroundSelect = document.getElementById("background");
 const discountRow = document.getElementById("discountRow");
 const discountInput = document.getElementById("discount");
 const languageButtons = document.querySelectorAll(".language-option");
+
+const helpContent = {
+    ru: {
+        format: {
+            title: "Формат персонажа",
+            images: ["headExample.jpg", "halfExample.jpg", "fullExample.jpg"],
+            captions: ["Бюст", "По бёдра", "Полный рост"]
+        },
+        extraCharacters: {
+            title: "Доп. персонаж (+100%)",
+            description: "Если на рисунке должно быть больше одного человека, добавьте нужное количество, не считая первого.",
+            images: ["extraCharExample1.jpg", "extraCharExample2.jpg", "extraCharExample3.jpg"]
+        },
+        background: {
+            title: "Фон",
+            description: "Выберите конкретную детализацию фона. Если фон не нужен либо он простой, оставьте «Без фона».",
+            images: ["simpleBackgroundExample.jpg", "mediumBackgroundExample.jpg", "highBackgroundExample.jpg"],
+            captions: ["Простой", "Средний", "Детализированный"]
+        },
+        heavyDetails: {
+            title: "Доп. детали",
+            images: ["extraDetailExample.jpg"]
+        },
+        nsfw: {
+            title: "NSFW (+50%~)",
+            description: "Если на рисунке должен быть 18+ контент: эротика, grimdark и т. д., поставьте галочку."
+        },
+        deadline: {
+            title: "Установление дедлайна (+25%)",
+            description: "Если вы хотите знать точный срок исполнения рисунка, поставьте галочку."
+        },
+        discount: {
+            title: "Подписка на платку (скидка 20%)",
+            description: "Если вы подписаны на платный ТГК, поставьте галочку, чтобы получить скидку."
+        },
+        customs: {
+            title: "Кастомы",
+            images: ["customExample.jpg"]
+        },
+        animation: {
+            title: "Анимации",
+            videos: ["aleriskun.webm", "armsmithkun.webm", "kevinkun.webm", "nalreschan.webm"],
+            compact: true
+        }
+    },
+    en: {
+        format: {
+            title: "Character format",
+            images: ["headExample.jpg", "halfExample.jpg", "fullExample.jpg"],
+            captions: ["Head", "Half", "Full body"]
+        },
+        extraCharacters: {
+            title: "Extra character (+100%)",
+            description: "If the artwork includes more than one person, add the required number without counting the first one.",
+            images: ["extraCharExample1.jpg", "extraCharExample2.jpg", "extraCharExample3.jpg"]
+        },
+        background: {
+            title: "Background",
+            description: "Choose the desired background detail. If you do not need a background or it is simple, leave «No background» selected.",
+            images: ["simpleBackgroundExample.jpg", "mediumBackgroundExample.jpg", "highBackgroundExample.jpg"],
+            captions: ["Simple", "Medium", "Detailed"]
+        },
+        heavyDetails: {
+            title: "Extra details",
+            images: ["extraDetailExample.jpg"]
+        },
+        nsfw: {
+            title: "NSFW (+50%~)",
+            description: "For 18+ content, such as erotic or grimdark art, tick the checkbox."
+        },
+        deadline: {
+            title: "Set deadline (+25%)",
+            description: "Tick the checkbox if you want a precise completion deadline for your artwork."
+        },
+        discount: {
+            title: "Subscription discount (20%)",
+            description: "If you are subscribed to the paid Telegram channel, tick the checkbox to receive the discount."
+        },
+        customs: {
+            title: "Customs",
+            images: ["customExample.jpg"]
+        },
+        animation: {
+            title: "Animations",
+            videos: ["aleriskun.webm", "armsmithkun.webm", "kevinkun.webm", "nalreschan.webm"],
+            compact: true
+        }
+    }
+};
+
+const helpPopover = document.getElementById("helpPopover");
+const helpPopoverContent = document.getElementById("helpPopoverContent");
+const helpTriggers = document.querySelectorAll(".help-trigger");
+const imageRotationMs = 3000;
+const animationRotationMs = 1500;
+let activeHelpTrigger = null;
+let helpHideTimer = null;
+let helpCloseTimer = null;
+let helpMediaTimer = null;
+let activeHelp = null;
+let activeHelpMediaIndex = 0;
+
+function clearHelpHideTimer() {
+    window.clearTimeout(helpHideTimer);
+    helpHideTimer = null;
+}
+
+function clearHelpCloseTimer() {
+    window.clearTimeout(helpCloseTimer);
+    helpCloseTimer = null;
+}
+
+function stopHelpMediaRotation() {
+    window.clearInterval(helpMediaTimer);
+    helpMediaTimer = null;
+}
+
+function updateHelpMedia() {
+    if (!activeHelp) return;
+
+    const sources = activeHelp.images || activeHelp.videos;
+    if (!sources || !sources.length) return;
+
+    const source = sources[activeHelpMediaIndex % sources.length];
+    const caption = helpPopoverContent.querySelector(".help-caption");
+
+    if (activeHelp.videos) {
+        const videos = helpPopoverContent.querySelectorAll(".help-video");
+        videos.forEach((video, index) => {
+            const isActive = index === activeHelpMediaIndex;
+            video.classList.toggle("is-active", isActive);
+            if (isActive) video.play().catch(() => {});
+        });
+    } else {
+        const media = helpPopoverContent.querySelector(".help-media");
+        if (media) media.src = source;
+    }
+
+    if (caption) {
+        caption.textContent = activeHelp.captions?.[activeHelpMediaIndex % activeHelp.captions.length] || "";
+        caption.hidden = !caption.textContent;
+    }
+}
+
+function startHelpMediaRotation() {
+    stopHelpMediaRotation();
+    const sources = activeHelp?.images || activeHelp?.videos;
+    if (!sources || sources.length < 2) return;
+
+    helpMediaTimer = window.setInterval(() => {
+        activeHelpMediaIndex = (activeHelpMediaIndex + 1) % sources.length;
+        updateHelpMedia();
+    }, activeHelp.videos ? animationRotationMs : imageRotationMs);
+}
+
+function renderHelpContent(help) {
+    helpPopoverContent.replaceChildren();
+    helpPopover.classList.toggle("is-compact", Boolean(help.compact));
+
+    const title = document.createElement("h3");
+    title.className = "help-title";
+    title.textContent = help.title;
+    helpPopoverContent.append(title);
+
+    if (help.description) {
+        const description = document.createElement("p");
+        description.className = "help-description";
+        description.textContent = help.description;
+        helpPopoverContent.append(description);
+    }
+
+    if (help.images) {
+        const mediaWrap = document.createElement("figure");
+        mediaWrap.className = "help-media-wrap";
+        const image = document.createElement("img");
+        image.className = "help-media";
+        image.alt = `${help.title}: пример`;
+        mediaWrap.append(image);
+
+        if (help.captions) {
+            const caption = document.createElement("figcaption");
+            caption.className = "help-caption";
+            mediaWrap.append(caption);
+        }
+
+        helpPopoverContent.append(mediaWrap);
+    }
+
+    if (help.videos) {
+        const videoStack = document.createElement("div");
+        videoStack.className = "help-video-stack";
+
+        help.videos.forEach((source, index) => {
+            const video = document.createElement("video");
+            video.className = "help-media help-video";
+            video.muted = true;
+            video.autoplay = true;
+            video.loop = true;
+            video.playsInline = true;
+            video.preload = "auto";
+            video.setAttribute("aria-label", `${help.title}: пример ${index + 1}`);
+            video.src = source;
+            videoStack.append(video);
+        });
+
+        helpPopoverContent.append(videoStack);
+    }
+
+    if (help.images || help.videos) updateHelpMedia();
+}
+
+function positionHelpPopover(trigger) {
+    const triggerRect = trigger.getBoundingClientRect();
+    const popoverRect = helpPopover.getBoundingClientRect();
+    const margin = 12;
+    const left = Math.min(
+        Math.max(margin, triggerRect.left),
+        window.innerWidth - popoverRect.width - margin
+    );
+    const below = triggerRect.bottom + 10;
+    const top = below + popoverRect.height <= window.innerHeight - margin
+        ? below
+        : Math.max(margin, triggerRect.top - popoverRect.height - 10);
+
+    helpPopover.style.left = `${left}px`;
+    helpPopover.style.top = `${top}px`;
+}
+
+function hideHelpPopover() {
+    clearHelpHideTimer();
+    stopHelpMediaRotation();
+
+    if (activeHelpTrigger) activeHelpTrigger.setAttribute("aria-expanded", "false");
+    activeHelpTrigger = null;
+    activeHelp = null;
+    helpPopover.classList.remove("is-visible");
+    clearHelpCloseTimer();
+    helpCloseTimer = window.setTimeout(() => {
+        if (!activeHelpTrigger) helpPopover.hidden = true;
+    }, 180);
+}
+
+function showHelpPopover(trigger) {
+    const key = trigger.dataset.help;
+    const help = helpContent[currentLanguage][key] || helpContent.ru[key];
+    if (!help) return;
+
+    clearHelpHideTimer();
+    clearHelpCloseTimer();
+    if (activeHelpTrigger && activeHelpTrigger !== trigger) {
+        activeHelpTrigger.setAttribute("aria-expanded", "false");
+    }
+
+    activeHelpTrigger = trigger;
+    activeHelp = help;
+    activeHelpMediaIndex = 0;
+    trigger.setAttribute("aria-expanded", "true");
+    renderHelpContent(help);
+    helpPopover.hidden = false;
+    positionHelpPopover(trigger);
+    window.requestAnimationFrame(() => helpPopover.classList.add("is-visible"));
+    startHelpMediaRotation();
+}
+
+function scheduleHelpHide() {
+    clearHelpHideTimer();
+    helpHideTimer = window.setTimeout(hideHelpPopover, 140);
+}
+
+helpTriggers.forEach((trigger) => {
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.addEventListener("mouseenter", () => showHelpPopover(trigger));
+    trigger.addEventListener("mouseleave", scheduleHelpHide);
+    trigger.addEventListener("focus", () => showHelpPopover(trigger));
+    trigger.addEventListener("blur", scheduleHelpHide);
+    trigger.addEventListener("click", () => showHelpPopover(trigger));
+});
+
+helpPopover.addEventListener("mouseenter", clearHelpHideTimer);
+helpPopover.addEventListener("mouseleave", scheduleHelpHide);
+window.addEventListener("resize", () => {
+    if (activeHelpTrigger && !helpPopover.hidden) positionHelpPopover(activeHelpTrigger);
+});
+window.addEventListener("scroll", () => {
+    if (activeHelpTrigger && !helpPopover.hidden) positionHelpPopover(activeHelpTrigger);
+}, { passive: true });
+document.addEventListener("pointerdown", (event) => {
+    if (!helpPopover.contains(event.target) && !event.target.closest(".help-trigger")) hideHelpPopover();
+});
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") hideHelpPopover();
+});
 
 function setLanguage(language) {
     currentLanguage = language;
