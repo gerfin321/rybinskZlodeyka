@@ -162,15 +162,18 @@ function calculate() {
     const base = parseInt(formatSelect.value, 10) || 0;
     const extraCharactersInput = document.getElementById("extraCharacters");
     const extraCharacters = normalizeCount(extraCharactersInput.value);
+    const heavyDetailsInput = document.getElementById("heavyDetails");
+    const heavyDetails = normalizeCount(heavyDetailsInput.value);
 
     extraCharactersInput.value = extraCharacters;
+    heavyDetailsInput.value = heavyDetails;
 
     let total = base * (1 + extraCharacters);
 
     const backgroundRate = parseFloat(backgroundSelect.value) || 0;
     total *= 1 + backgroundRate;
 
-    if (document.getElementById("heavyDetails").checked) total *= 1.2;
+    total *= 1 + heavyDetails * 0.2;
 
     const isEstimate = document.getElementById("nsfw").checked;
     if (isEstimate) total *= 1.5;
