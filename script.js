@@ -31,12 +31,18 @@ const pricing = {
             { value: 4000, label: "По бёдра: 4000₽" },
             { value: 6000, label: "Полный рост: 6000₽" },
             { value: 250, label: "Чиби line: 250₽" },
-            { value: 500, label: "Чиби color: 500₽" }
+            { value: 500, label: "Чиби color: 500₽" },
+            { value: 0, label: "Без персонажа" }
         ],
         backgrounds: [
             { value: 0, label: "Без фона" },
             { value: 0.5, label: "Средний: +50%" },
             { value: 1, label: "Детальный: +100%" }
+        ],
+        backgroundOnly: [
+            { value: 0, price: 0, label: "Без фона: бесплатно" },
+            { value: 0.5, price: 2500, label: "Средняя детализация: 2000-3000₽" },
+            { value: 1, price: 7000, label: "Высокая детализация: 6000-8000₽" }
         ]
     },
     en: {
@@ -45,12 +51,18 @@ const pricing = {
             { value: 80, label: "Half: $80" },
             { value: 120, label: "Full: $120" },
             { value: 5, label: "Chibi line: $5" },
-            { value: 10, label: "Chibi color: $10" }
+            { value: 10, label: "Chibi color: $10" },
+            { value: 0, label: "No character" }
         ],
         backgrounds: [
             { value: 0, label: "No background" },
             { value: 0.5, label: "Medium: +50%" },
             { value: 1, label: "Detailed: +100%" }
+        ],
+        backgroundOnly: [
+            { value: 0, price: 0, label: "No background: free" },
+            { value: 0.5, price: 65, label: "Medium detail: $50-70" },
+            { value: 1, price: 170, label: "High detail: $120-200" }
         ]
     }
 };
@@ -112,6 +124,7 @@ const helpContent = {
     ru: {
         format: {
             title: "Формат персонажа",
+            description: "Для заказа только фона выберите «Без персонажа».",
             images: ["headExample.jpg", "halfExample.jpg", "fullExample.jpg"],
             captions: ["Бюст", "По бёдра", "Полный рост"]
         },
@@ -155,6 +168,7 @@ const helpContent = {
     en: {
         format: {
             title: "Character format",
+            description: "To order only a background, select «No character».",
             images: ["headExample.jpg", "halfExample.jpg", "fullExample.jpg"],
             captions: ["Head", "Half", "Full body"]
         },
@@ -415,13 +429,12 @@ function setLanguage(language) {
         else element.textContent = value;
     });
 
+    const selectedFormatIndex = Math.max(0, formatSelect.selectedIndex);
     formatSelect.innerHTML = pricing[language].formats
         .map((format) => `<option value="${format.value}">${format.label}</option>`)
         .join("");
 
-    backgroundSelect.innerHTML = pricing[language].backgrounds
-        .map((background) => `<option value="${background.value}">${background.label}</option>`)
-        .join("");
+    formatSelect.selectedIndex = selectedFormatIndex;
 
     discountRow.hidden = language === "en";
     if (language === "en") discountInput.checked = false;
@@ -454,6 +467,20 @@ function normalizeCount(value) {
 
 function calculate() {
     const base = parseInt(formatSelect.value, 10) || 0;
+    const backgroundOnly = formatSelect.value === "0";
+    const backgrounds = backgroundOnly
+        ? pricing[currentLanguage].backgroundOnly
+        : pricing[currentLanguage].backgrounds;
+    const pricingKey = currentLanguage + (backgroundOnly ? "-background" : "-character");
+
+    if (backgroundSelect.dataset.pricingKey !== pricingKey) {
+        const selectedBackground = backgroundSelect.value || "0";
+        backgroundSelect.innerHTML = backgrounds
+            .map((background) => `<option value="${background.value}">${background.label}</option>`)
+            .join("");
+        backgroundSelect.value = selectedBackground;
+        backgroundSelect.dataset.pricingKey = pricingKey;
+    }
     const extraCharactersInput = document.getElementById("extraCharacters");
     const extraCharacters = normalizeCount(extraCharactersInput.value);
     const heavyDetailsInput = document.getElementById("heavyDetails");
@@ -462,14 +489,21 @@ function calculate() {
     extraCharactersInput.value = extraCharacters;
     heavyDetailsInput.value = heavyDetails;
 
-    let total = base * (1 + extraCharacters);
+    const nsfwInput = document.getElementById("nsfw");
+    extraCharactersInput.disabled = backgroundOnly;
+    heavyDetailsInput.disabled = backgroundOnly;
+    nsfwInput.disabled = backgroundOnly;
 
-    const backgroundRate = parseFloat(backgroundSelect.value) || 0;
-    total *= 1 + backgroundRate;
+    let total;
+    if (backgroundOnly) {
+        total = backgrounds.find((background) => String(background.value) === backgroundSelect.value)?.price || 0;
+    } else {
+        const backgroundRate = parseFloat(backgroundSelect.value) || 0;
+        total = base * (1 + extraCharacters) * (1 + backgroundRate);
+        total *= 1 + heavyDetails * 0.2;
+    }
 
-    total *= 1 + heavyDetails * 0.2;
-
-    const isEstimate = document.getElementById("nsfw").checked;
+    const isEstimate = !backgroundOnly && nsfwInput.checked;
     if (isEstimate) total *= 1.5;
     if (document.getElementById("deadline").checked) total *= 1.25;
 
