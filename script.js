@@ -78,7 +78,7 @@ const translations = {
         heavyDetailsLabel: "Доп. детали, крылья, броня и т. д. (+20%)",
         nsfwLabel: "NSFW (+50%~)",
         deadlineLabel: "Установление дедлайна (+25%)",
-        discountLabel: "Подписка на платку (скидка 20%)",
+        discountLabel: "Подписка на платку (скидка 10%)",
         totalLabel: "Итог",
         importantTitle: "Важно",
         prepaymentText: "Предоплата 100% после одобрения скетча",
@@ -99,7 +99,7 @@ const translations = {
         heavyDetailsLabel: "Extra details, wings, armor, etc. (+20%)",
         nsfwLabel: "NSFW (+50%~)",
         deadlineLabel: "Set deadline (+25%)",
-        discountLabel: "Subscription discount (20%)",
+        discountLabel: "Subscription discount (10%)",
         totalLabel: "Total",
         importantTitle: "Important",
         prepaymentText: "100% prepayment after sketch approval",
@@ -152,7 +152,7 @@ const helpContent = {
             description: "Если вы хотите знать точный срок исполнения рисунка, поставьте галочку."
         },
         discount: {
-            title: "Подписка на платку (скидка 20%)",
+            title: "Подписка на платку (скидка 10%)",
             description: "Если вы подписаны на платный ТГК, поставьте галочку, чтобы получить скидку."
         },
         customs: {
@@ -196,7 +196,7 @@ const helpContent = {
             description: "Tick the checkbox if you want a precise completion deadline for your artwork."
         },
         discount: {
-            title: "Subscription discount (20%)",
+            title: "Subscription discount (10%)",
             description: "If you are subscribed to the paid Telegram channel, tick the checkbox to receive the discount."
         },
         customs: {
@@ -507,7 +507,7 @@ function calculate() {
     if (isEstimate) total *= 1.5;
     if (document.getElementById("deadline").checked) total *= 1.25;
 
-    if (currentLanguage === "ru" && discountInput.checked) total *= 0.8;
+    if (currentLanguage === "ru" && discountInput.checked) total *= 0.9;
 
     const roundedTotal = Math.round(total);
     const estimateMark = isEstimate ? "~" : "";
